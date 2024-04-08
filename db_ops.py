@@ -56,7 +56,6 @@ def delete_user(connection, user_id):
     delete_cursor.execute(query1)
     delete_cursor.execute(query2)
     connection.commit()
-    # user = cursor.fetchone()
     print(delete_cursor.rowcount, "record(s) deleted successfully in the Users table")
     print(f"User with ID {user_id} deleted from the Users table")
     delete_cursor.close()
