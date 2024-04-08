@@ -11,7 +11,8 @@ port = "3306"
 username = "root"
 password = "Lekha@123456"
 
-def create_user():
+def create_user(connection):
+    cursor = connection.cursor()
     username = input("Enter username: ")
     email = input("Enter email: ")
     password =input("Enter password: ")
@@ -24,96 +25,75 @@ def create_user():
     connection.commit()
     print(cursor.rowcount, "Record inserted successfully in the User table")
     print("user added in the table")
+    cursor.close()
 
-def read_users_data(username):
+def read_users_data(connection, username):
+    cursor = connection.cursor()
     query = f'''SELECT username, email, first_name, last_name FROM Users WHERE username = "{username}"'''
     cursor.execute(query)
     user = cursor.fetchone()
     if user:
-        print("User details: ", user)
-        
+        print("User details: ", user)      
     else:
         print("User Not Found")
-        
-# def read_users_id_data(userid):
-#     # username = input("Enter username to get details of user: ")
-#     query = f'''SELECT username, email, first_name, last_name FROM Users WHERE userid = "{userid}"'''
-#     cursor.execute(query)
-#     user = cursor.fetchone()
-#     if user:
-#         print("User details: ", user)
-        
-#     else:
-#         print("User Not Found")
+        cursor.close()
         
 
-def update_user_details(user_id, column_name,value ):
+def update_user_details(connection, user_id, column_name,value ):
+    cursor = connection.cursor()
     query = f'''UPDATE Users SET {column_name} = '{value}' WHERE userid = {user_id}'''
     cursor.execute(query)
     connection.commit()
     print(cursor.rowcount, f'Record updated successfully in the Users table')
     print(f"user updated in the table")
+    cursor.close()
 
-def delete_user(user_id):
-    try:
-        delete_cursor = connection.cursor()
-        # query = f'''SET FOREIGN_KEY_CHECKS=0; DELETE FROM Users WHERE userid = {user_id};  SET FOREIGN_KEY_CHECKS=1'''
-        query1 = f'''DELETE FROM users_roles WHERE user_id = {user_id}'''
-        query2 = f'''DELETE FROM Users WHERE userid = {user_id}'''
-        delete_cursor.execute(query1)
-        delete_cursor.execute(query2)
-        connection.commit()
-        # user = cursor.fetchone()
-        print(delete_cursor.rowcount, "record(s) deleted successfully in the Users table")
-        print(f"User with ID {user_id} deleted from the Users table")
-    except mysql.connector.Error as error:
-        print(f"Failed to delete user: {error}")
+def delete_user(connection, user_id):
+    delete_cursor = connection.cursor()
+    # query = f'''SET FOREIGN_KEY_CHECKS=0; DELETE FROM Users WHERE userid = {user_id};  SET FOREIGN_KEY_CHECKS=1'''
+    query1 = f'''DELETE FROM users_roles WHERE user_id = {user_id}'''
+    query2 = f'''DELETE FROM Users WHERE userid = {user_id}'''
+    delete_cursor.execute(query1)
+    delete_cursor.execute(query2)
+    connection.commit()
+    # user = cursor.fetchone()
+    print(delete_cursor.rowcount, "record(s) deleted successfully in the Users table")
+    print(f"User with ID {user_id} deleted from the Users table")
+    delete_cursor.close()
         
-def update_role(user_id, role_id):
-        query = f'''UPDATE users_roles SET role_id = {role_id} WHERE user_id = {user_id}'''
-        cursor.execute(query)
-        connection.commit()
-        print(cursor.rowcount, f'Record updated successfully in the user_roles table')
-        print(f"user_roles updated in the table")
+def update_role(connection, user_id, role_id):
+    cursor = connection.cursor()
+    query = f'''UPDATE users_roles SET role_id = {role_id} WHERE user_id = {user_id}'''
+    cursor.execute(query)
+    connection.commit()
+    print(cursor.rowcount, f'Record updated successfully in the user_roles table')
+    print(f"user_roles updated in the table")
+    cursor.close()
+    
         
-        
-def read_all_users():
+def read_all_users(connection):
+    cursor = connection.cursor()
     df = pd.read_sql('SELECT * FROM Users', connection, index_col="userid")
     df.drop(["password", "is_active"], axis=1, inplace=True)
     print(tabulate(df, headers=df.columns, tablefmt="grid"))
+    cursor.close()
     
 
+def connect_db():  
+    try:
+        connection = mysql.connector.connect(host=hostname, database=database, user=username, password=password, port=port)
+        if connection.is_connected():
+            db_Info = connection.get_server_info()
+            print("Connected to MySQL Server version ", db_Info)
+            cursor = connection.cursor()
+            cursor.execute("select database();")
+            record = cursor.fetchone()
+            print("You're connected to database: ", record)
+            return connection
 
-try:
-    connection = mysql.connector.connect(host=hostname, database=database, user=username, password=password, port=port)
-    if connection.is_connected():
-        db_Info = connection.get_server_info()
-        print("Connected to MySQL Server version ", db_Info)
-        cursor = connection.cursor()
-        cursor_delete = connection.cursor()
-        cursor.execute("select database();")
-        record = cursor.fetchone()
-        print("You're connected to database: ", record)
-        cursor.execute("SHOW TABLES;")
-        record_table = cursor.fetchall()
-        print("Tables in the database: ", record_table)
-        
-        
-        # create_user()
-        # read_users_data()
-        # update_user_details(user_id=11113, column_name= "email" , value="xyz@gmail.com")
-        
-        # delete_user(user_id=11116)
-        # update_role(user_id=3, role_id=3)
-        read_all_users()
-
-except Exception as e:
-    print("Error while connecting to MySQL", e)
-finally:
-    if connection.is_connected():
-        cursor.close()
-        connection.close()
-        print("MySQL connection is closed")
+    except Exception as e:
+        print("Error while connecting to MySQL", e)
+        return None
 
 
 
