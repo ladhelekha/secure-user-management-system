@@ -89,7 +89,9 @@ def connect_db():
             record = cursor.fetchone()
             print("You're connected to database: ", record)
             return connection
-
+            
+        
+        
     except Exception as e:
         print("Error while connecting to MySQL", e)
         return None
