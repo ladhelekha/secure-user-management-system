@@ -1,8 +1,3 @@
-import db_ops
-db_connection = db_ops.connect_db()
-print(db_connection)
-
-
 def most_active_users(connection):
     cursor = connection.cursor()
     query = f'''SELECT username FROM Users WHERE is_active = true ORDER BY created_at ASC LIMIT 20'''
@@ -13,7 +8,6 @@ def most_active_users(connection):
     for indexx, value in enumerate(username):
         print(f"{indexx+1}. {value[0]}")
     
-# most_active_users(connection=db_connection)
 
 def inactive_six_months_users(connection):
     cursor = connection.cursor()
@@ -21,15 +15,11 @@ def inactive_six_months_users(connection):
     cursor.execute(query)
     inactive_sixmonths_users = cursor.fetchall()
     print("Inactive users onboarded in last six months are as follows: ")
-    # print(inactive_sixmonths_users)
     
     for i in range(len(inactive_sixmonths_users)):
         print(f'{i+1}. {inactive_sixmonths_users[i][1]}')
     
     
-   
-# inactive_six_months_users(connection=db_connection)
-
 def get_role_name(role_id):
     if role_id == 1:
         return "user"
@@ -54,7 +44,6 @@ def role_distribution(connection):
         role = get_role_name(role_id=role_distribution[i][0])
         print(f'{i+1}. {role_distribution[i][1]} - {role}')
 
-# role_distribution(connection=db_connection)
 
 def least_assigned_role(connection):
     cursor = connection.cursor()
@@ -68,7 +57,6 @@ def least_assigned_role(connection):
         role = get_role_name(role_id=least_assigned_role[i][0])
         print(f'Least assigned role is: {role} with a count of {least_assigned_role[i][1]} ') 
     
-# least_assigned_role(connection=db_connection)
 
 def active_admins(connection):
     cursor = connection.cursor()
@@ -82,9 +70,6 @@ GROUP BY
     print(no_active_admins)
     print(f" inactiveadmins = {no_active_admins[0][1]} and active admins = {no_active_admins[1][1]} ")
     
-   
-# active_admins(connection=db_connection)
-
 def active_users(connection):
     cursor = connection.cursor()
     query = f'''SELECT is_active, COUNT(*) as user_count FROM Users u INNER JOIN users_roles ur ON u.userid = ur.user_id
@@ -95,7 +80,6 @@ WHERE
     print(no_active_users)    
     print(f" activeusers = {no_active_users[0][1]} and inactiveusers = {no_active_users[1][1]} ")
     
-# active_users(connection=db_connection)
 
 def user_churn_analysis(connection):
     cursor = connection.cursor()
@@ -121,4 +105,3 @@ GROUP BY
     for indexx, role_churnrate in enumerate(user_churn):
         print(f"{indexx+1}. For role - {role_churnrate[1]} churn_rate is {role_churnrate[4]}")   
     
-user_churn_analysis(connection=db_connection)

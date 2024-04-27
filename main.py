@@ -1,15 +1,7 @@
+import os
 import db_ops 
 import data_analysis
-# from db_ops import connect_db, create_user
 db_connection = db_ops.connect_db()
-print(db_connection)
-
-
-# if db_connection is None:
-#     print("connection Failed")
-# else:  
-#     create_user(connection=db_connection)
-#     db_connection.close()
 
 def main_menu():
     print("1.Crud Menu\n2.Data Analysis Menu\n3.Exit")
@@ -25,6 +17,7 @@ def data_analysis_menu():
     
 while True:
     main_menu_choice = main_menu()
+    os.system("clear")
     if main_menu_choice == 1:
         while True:
             crud_choice = crud_menu()
