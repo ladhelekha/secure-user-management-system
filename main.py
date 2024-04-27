@@ -16,10 +16,11 @@ def data_analysis_menu():
     return int(input("Enter your choice: "))
     
 while True:
-    main_menu_choice = main_menu()
     os.system("clear")
+    main_menu_choice = main_menu()
     if main_menu_choice == 1:
         while True:
+            os.system("clear")
             crud_choice = crud_menu()
             if crud_choice == 1:
                 db_ops.create_user(connection=db_connection)
@@ -37,10 +38,10 @@ while True:
                 print("Exit crud_menu")
                 break
             else:
-                print("Enter a valid choice. Please try again.") 
-            break                 
+                print("Enter a valid choice. Please try again.")                  
     elif main_menu_choice == 2:
         while True:
+            os.system("clear")
             data_analysis_choice = data_analysis_menu()
             if data_analysis_choice == 1:    
                 data_analysis.most_active_users(connection=db_connection)
@@ -60,7 +61,8 @@ while True:
                 print("Exit Data Analysis Menu")
                 break
             else:
-                print("Enter a valid choice. Please try again.")       
+                print("Enter a valid choice. Please try again.") 
+            input("Press Enter to go back")      
     elif main_menu_choice == 3:
         print("Exit")
         break
