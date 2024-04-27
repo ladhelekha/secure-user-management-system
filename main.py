@@ -1,7 +1,10 @@
 import db_ops 
+import data_analysis
 # from db_ops import connect_db, create_user
 db_connection = db_ops.connect_db()
 print(db_connection)
+
+
 # if db_connection is None:
 #     print("connection Failed")
 # else:  
@@ -17,8 +20,8 @@ def crud_menu():
     return int(input("Enter your choice: "))
     
 def data_analysis_menu():
-    print("")
-    
+    print("1.Most Active Users\n2.Inactive Users\n3.Role Distribution\n4.Least Assigned Role\n5.Active Admins\n6.Active Users\n7.User Churn Analysis\n8.Exit")
+    return int(input("Enter your choice: "))
     
 while True:
     main_menu_choice = main_menu()
@@ -28,13 +31,13 @@ while True:
             if crud_choice == 1:
                 db_ops.create_user(connection=db_connection)
             elif crud_choice == 2:
-                db_ops.read_users_data(connection=db_connection,username="ugrimes")
+                db_ops.read_users_data(connection=db_connection,username= input("Enter username: "))
             elif crud_choice == 3:
-                db_ops.update_user_details(connection=db_connection, user_id=711, column_name="email", value="raj@gmail.com")
+                db_ops.update_user_details(connection=db_connection, user_id=input("Enter user_id: "), column_name=input("Enter column_name: "), value=input("Enter value: "))
             elif crud_choice == 4:
-                db_ops.delete_user(connection=db_connection, user_id=11115)
+                db_ops.delete_user(connection=db_connection, user_id=input("Enter user_id: "))
             elif crud_choice == 5:
-                db_ops.update_role(connection=db_connection, user_id=711, role_id=4)
+                db_ops.update_role(connection=db_connection, user_id=input("Enter user_id: "), role_id=input("Enter role_id: "))
             elif crud_choice == 6:
                 db_ops.read_all_users(connection=db_connection)
             elif crud_choice == 7:
@@ -44,7 +47,27 @@ while True:
                 print("Enter a valid choice. Please try again.") 
             break                 
     elif main_menu_choice == 2:
-        data_analysis_menu()
+        while True:
+            data_analysis_choice = data_analysis_menu()
+            if data_analysis_choice == 1:    
+                data_analysis.most_active_users(connection=db_connection)
+            elif data_analysis_choice == 2:
+                data_analysis.inactive_six_months_users(connection=db_connection)
+            elif data_analysis_choice == 3:
+                data_analysis.role_distribution(connection=db_connection)
+            elif data_analysis_choice == 4:
+                data_analysis.least_assigned_role(connection=db_connection)
+            elif data_analysis_choice == 5:
+                data_analysis.active_admins(connection=db_connection)
+            elif data_analysis_choice == 6:
+                data_analysis.active_users(connection=db_connection)
+            elif data_analysis_choice == 7:
+                data_analysis.user_churn_analysis(connection=db_connection)              
+            elif data_analysis_choice == 8:
+                print("Exit Data Analysis Menu")
+                break
+            else:
+                print("Enter a valid choice. Please try again.")       
     elif main_menu_choice == 3:
         print("Exit")
         break
